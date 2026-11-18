@@ -4,10 +4,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!-- Mises à jour depuis GitHub et mode « Jumeau numérique » (connexion à un PC). -->
+    <!-- Recettes et mode « Jumeau numérique » (connexion à un PC). -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Installation des mises à jour sur un appareil non rooté (Android 8 et plus). -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- Bouton « Retour à Toque » par-dessus l'appli d'origine (le robot n'a pas de bouton Accueil). -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
@@ -17,6 +15,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="Toque"
         android:largeHeap="false"
+        android:usesCleartextTraffic="false"
         android:supportsRtl="false"
         android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen">
 
@@ -60,10 +59,6 @@
 
         <receiver
             android:name=".recipes.SyncAlarm"
-            android:exported="false" />
-
-        <receiver
-            android:name=".update.InstallResultReceiver"
             android:exported="false" />
 
         <receiver

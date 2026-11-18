@@ -73,7 +73,7 @@ A log is kept in `C:\Toque\setup-log.txt`, state in `C:\Toque\state.json`.
 | # | Step | Who | What happens |
 |---|------|-----|--------------|
 | 0 | clone | agent | Get this repository on the PC (git clone or the ZIP of `main`). |
-| 1 | `prepare` | agent | Downloads adb, Magisk v31.0, TWRP and the scatter file, the latest Toque APK; checks SHA-256. |
+| 1 | `prepare` | agent | Downloads adb, Magisk v31.0, TWRP and the scatter file; checks SHA-256. |
 | 1b | (browser) | agent + person | Two files need a browser, see *Manual downloads*. Then `prepare` again. |
 | 2 | `driver` | agent + person | Installs the MediaTek PreLoader USB VCOM driver (UAC prompt). May ask to turn memory integrity off and restart. |
 | 3 | `backup` | person, then agent | Cover off, cable in the **right-hand "Android USB" port**, robot off; the script reads `boot` and `recovery`; the person switches the robot on when told. Verifies two 16 MiB Android images. |
@@ -81,7 +81,7 @@ A log is kept in `C:\Toque\setup-log.txt`, state in `C:\Toque\state.json`.
 | 5 | `root` | agent | In TWRP: patches the *original* boot with Magisk, enables ADB in Android, authorizes the PC's ADB key, pulls `boot-magisk.img`. |
 | 6 | `flash-root` | agent + person | Writes `boot-magisk.img` into `boot` and TWRP into `recovery`. Power cycle as above → stock app. |
 | 7 | `android` | agent + person | Checks Magisk, installs its app; the person taps **Grant** on the robot once. Checks the boot partition. |
-| 8 | `install` | agent | Installs Toque, allows it in Magisk, starts it. |
+| 8 | `install` | agent | Installs the APK passed with -Apk, allows it in Magisk, starts it. |
 | 9 | first run | person | Empty bowl: Settings › Machine › Real machine › Apply, badge **Ready**, manual cooking 10 s speed 2. |
 | 10 | `wifi` | agent | ADB over Wi-Fi (port 5555), so the cable can go and the cover go back on. |
 | 11 | `cleanup` | agent + person | Removes the MediaTek driver; the person can turn memory integrity back on. |
@@ -104,9 +104,9 @@ Then: Toque › Settings › Lidl recipes › **Sync** (about 15 minutes the fir
    Pick the update whose download is named
    `20896845_fdc6bb5aa9a9bac99adf85d931d6c21d1130a96e.cab` (the hex part is its SHA-1; SHA-256
    `ce72e97c07582ad41debfaeee6f6284ecd28285df5f9caa05193653fb236561f`). Save it in
-   `C:\Toque\downloads\`.
+   `C:\Toque\downloads`.
 2. **SP Flash Tool v5.1924 for Windows** — `https://spflashtool.com/download`, file
-   `SP_Flash_Tool_v5.1924_Win.zip`. Extract it into `C:\Toque\SP_Flash_Tool\`. The script checks
+   `SP_Flash_Tool_v5.1924_Win.zip`. Extract it into `C:\Toque\SP_Flash_Tool`. The script checks
    `flash_tool.exe` (SHA-256 `67e9eb48161087d43eca845b2dc0e9beacac3c0381bd1ce7989d48b17e2084a7`) and
    `MTK_AllInOne_DA.bin` (`9cbf39f3925fe88d18bd4c4e45dd1c01741bf7a31a4f69252dfb318d229c0346`).
 
@@ -120,7 +120,7 @@ Ask the person before downloading (state the file names, sources and sizes: ~130
 | Magisk v31.0 | `https://github.com/topjohnwu/Magisk/releases/download/v31.0/Magisk-v31.0.apk` | `2c8a488b9a5293e578e95ae4f07e3c57aba4feec4a52ca4dd852a2692d6dd4e8` |
 | TWRP `hacks/recovery.img` | [EliasKotlyar/Monsieur-Cuisine-Connect-Hack](https://github.com/EliasKotlyar/Monsieur-Cuisine-Connect-Hack) | `fc9ac999fc3b0a6c0cb563f39359084a6fcc211aeb42e7b754990afa4b543d3e` |
 | Scatter `l706_dfbh_v_695scatter.txt` | same repository | `13b8260dba9e4efba874c09e35803af43cc69556ba0f1937226240b0ab318364` |
-| Toque `Toque-X.Y.Z.apk` | [latest release](https://github.com/Wuki60/MrCuisineVibeConnect/releases/latest) of this repository | (signed with the project key) |
+| Toque APK | Build locally and pass the APK explicitly with -Apk | (locally signed) |
 
 ### SP Flash Tool: console mode, and the GUI fallback
 
@@ -172,9 +172,9 @@ operation in the window — with a computer-use tool, or by guiding the person:
 
 ## After the install
 
-- Updates: Toque › Settings › Updates installs new releases from this repository.
+- Updates: install a locally signed APK manually using the same signing key.
 - Recipes: Settings › Lidl recipes › Sync (monsieur-cuisine.com, no account). Nightly re-sync.
-- Clock: set automatically (time zone from the Internet connection); Settings › Date and time.
+- Clock: Europe/Madrid, with network time supplied by Android.
 - To work on the robot later over Wi-Fi: `adb connect <robot IP>:5555`.
 
 ## Working on the code

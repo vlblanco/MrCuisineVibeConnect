@@ -20,7 +20,7 @@ The easiest way: let an AI agent that can operate your Windows PC (Claude, ChatG
 the install. Give it this message:
 
 > Install Toque on my Monsieur Cuisine Connect by following AGENTS.md in
-> https://github.com/Wuki60/MrCuisineVibeConnect
+> https://github.com/vlblanco/MrCuisineVibeConnect
 
 [AGENTS.md](AGENTS.md) describes the whole procedure to the agent, and
 [`tools/setup/toque-setup.ps1`](tools/setup/toque-setup.ps1) does the work step by step (verified
@@ -62,13 +62,12 @@ Las recetas importadas desde la aplicación original conservan su idioma de orig
   straight from one speed and temperature to the next without stopping.
 - **Manual cooking**, **Knead / Steam / Sauté** programs, **Turbo**, **scale**.
 - **Offline**: everything works without a network (no more "server unreachable" at startup).
-- **Always the right time**: the time zone comes from the Internet connection and the time from
-  the network (the robot has no clock battery); can be set by hand in *Settings › Date and time*.
+- **Date and time**: fixed to Europe/Madrid with Android network time. Toque uses no IP geolocation.
 - **Made for a robot without Android buttons**: Toque opens at startup, and a **Back to Toque**
   button stays on top of the stock app when you open it.
-- **Updates from GitHub**: *Settings › Updates* checks this repository's
-  [Releases](https://github.com/Wuki60/MrCuisineVibeConnect/releases) and installs the new version
-  (silently on a rooted robot, then Toque restarts). Refused while a program is running.
+- **Updates**: install a new APK manually. Toque does not check GitHub from the robot.
+- **Recipe networking**: HTTPS only, with redirects disabled and a fixed list of TecPal recipe API
+  and image hosts.
 
 ## Safety: what changes compared to the stock app
 
@@ -140,22 +139,17 @@ The app is written in French; each other language is one file in
 The language then appears in *Settings › Langue · Language*. `gradlew :core:test` checks
 every language file.
 
-## Publish a new version
+## Build an APK for your robot
 
-1. Increase `versionCode` and `versionName` in `app/build.gradle.kts`.
-2. Commit and push to `main`.
+A debug APK built locally uses the debug key from your Android build environment. For an APK
+signed with a dedicated key, create a private PKCS12 Android signing keystore and set
+`TOQUE_KEYSTORE` to its absolute path, plus `TOQUE_STORE_PASSWORD`, `TOQUE_KEY_ALIAS` and
+`TOQUE_KEY_PASSWORD`. Run `gradlew assembleRelease`. Keep the key outside the repository and
+reuse it for later releases. A release built without these settings is unsigned.
 
-The [release workflow](.github/workflows/release.yml) runs the tests, builds the APK and publishes
-the `vX.Y.Z` release with it. Robots then find it in *Settings › Updates*.
-
-All builds are signed with the project key in `app/signature/` (public on purpose), so an APK built
-on any PC or by GitHub installs over the previous version. Only install APKs from this repository's
-releases.
-
-Without GitHub Actions: `gradlew assembleRelease`, then
-`powershell -ExecutionPolicy Bypass -File tools\publish-release.ps1 -Apk app\build\outputs\apk\release\app-release.apk`
-creates the `vX.Y.Z` release and attaches the APK (GitHub token: `GH_TOKEN`, `gh`, or the credentials
-already stored for git).
+Pass the locally built APK to the installation script with `-Apk`. Android requires the same
+signing key for an in-place upgrade. Moving from an APK signed with the old public key requires
+a fresh install, which removes the old Toque app data, including local favorites.
 
 ## Install on the robot
 

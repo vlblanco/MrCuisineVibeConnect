@@ -17,7 +17,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.HttpURLConnection
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
@@ -143,7 +142,7 @@ class OnlineSync(private val context: Context, private val prefs: Prefs, private
         val missing = ArrayList<String>()
         for (id in ids) {
             val url = repo.get(id)?.image ?: continue
-            if (url.startsWith("http") && repo.imageFile(url) == null) missing += url
+            if (McOnline.trustedUrl(url) != null && repo.imageFile(url) == null) missing += url
         }
         var inARow = 0
         for ((i, url) in missing.withIndex()) {
@@ -186,14 +185,16 @@ class OnlineSync(private val context: Context, private val prefs: Prefs, private
 
     /** GET avec reprises espacées si le serveur demande de ralentir (429) ou est indisponible (5xx). */
     private fun download(url: String, headers: Map<String, String>, maxBytes: Int): ByteArray {
+        val target = McOnline.trustedUrl(url) ?: throw IOException("Untrusted recipe URL")
         var attempt = 0
         while (true) {
             attempt++
-            val c = URL(url).openConnection() as HttpURLConnection
+            val c = target.openConnection() as HttpURLConnection
+            c.instanceFollowRedirects = false
             try {
                 c.connectTimeout = 20_000
                 c.readTimeout = 30_000
-                c.setRequestProperty("User-Agent", "Toque/$version (Android; +https://github.com/Wuki60/MrCuisineVibeConnect)")
+                c.setRequestProperty("User-Agent", "Toque/$version (Android)")
                 for ((k, v) in headers) c.setRequestProperty(k, v)
                 val code = c.responseCode
                 if ((code == 429 || code >= 500) && attempt < 4) {

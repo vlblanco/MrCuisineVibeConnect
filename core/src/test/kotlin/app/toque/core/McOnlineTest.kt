@@ -112,6 +112,16 @@ class McOnlineTest {
         assertNotNull(McOnline.parseRecipe("""{"data":{"recipe":{"id":"2","name":"Vide"}}}"""))
     }
 
+    @Test fun recipeNetworkAllowlist() {
+        assertNotNull(McOnline.trustedUrl(McOnline.listUrl(1)))
+        assertNotNull(McOnline.trustedUrl("https://mc-web-content-cdn.tecpal.com/recipe.jpg"))
+        assertNotNull(McOnline.trustedUrl("https://mc-web-user-content-cdn.tecpal.com/recipe.jpg"))
+        assertNull(McOnline.trustedUrl("http://mc-api.tecpal.com/"))
+        assertNull(McOnline.trustedUrl("https://mc-api.tecpal.com.example.org/"))
+        assertNull(McOnline.trustedUrl("https://mc-api.tecpal.com@localhost/"))
+        assertNull(McOnline.trustedUrl("https://mc-api.tecpal.com:8443/"))
+    }
+
     @Test fun headersAndUrls() {
         assertEquals("web", McOnline.headers("fr-FR")["device-type"])
         assertEquals("fr-FR", McOnline.languageFor("fr"))

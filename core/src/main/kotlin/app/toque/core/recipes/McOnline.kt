@@ -19,6 +19,22 @@ import app.toque.core.machine.Accessory
  */
 object McOnline {
     const val API = "https://mc-api.tecpal.com"
+    private val allowedHosts = setOf(
+        "mc-api.tecpal.com",
+        "mc-web-content-cdn.tecpal.com",
+        "mc-web-user-content-cdn.tecpal.com",
+    )
+
+    fun trustedUrl(value: String): java.net.URL? {
+        val uri = try {
+            java.net.URI(value)
+        } catch (_: java.net.URISyntaxException) {
+            return null
+        }
+        if (uri.scheme != "https" || uri.userInfo != null || uri.host?.lowercase() !in allowedHosts ||
+            uri.port !in listOf(-1, 443)) return null
+        return uri.toURL()
+    }
     /** Monsieur Cuisine connect. */
     const val DEVICE = "MC2.0"
     const val PAGE_SIZE = 100

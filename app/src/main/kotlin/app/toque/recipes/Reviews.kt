@@ -18,7 +18,7 @@ object Reviews {
         val language = McOnline.languageFor(I18n.code)
         val key = "$language/$apiId/$page"
         synchronized(cache) { cache[key] }?.let { return it }
-        val r = McOnline.parseReviews(Http.get(McOnline.reviewsUrl(apiId, page), McOnline.reviewHeaders(language)).body)
+        val r = McOnline.parseReviews(Http.get(McOnline.reviewsUrl(apiId, page), McOnline.reviewHeaders(language)))
         synchronized(cache) { cache[key] = r }
         return r
     }

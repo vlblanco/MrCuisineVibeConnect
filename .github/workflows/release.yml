@@ -1,5 +1,4 @@
 # Publishes a Toque release automatically when versionName changes in app/build.gradle.kts.
-# Robots then find it in Settings › Updates.
 name: Publish a release
 
 on:
@@ -50,6 +49,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           v="${{ steps.version.outputs.name }}"
+          if [ ! -f app/build/outputs/apk/release/app-release.apk ]; then
+            echo "No signed release APK. Publish a privately signed build manually."
+            exit 0
+          fi
           cp app/build/outputs/apk/release/app-release.apk "Toque-$v.apk"
           prev=$(git describe --tags --abbrev=0 2>/dev/null || true)
           if [ -n "$prev" ]; then range="$prev..HEAD"; else range="HEAD"; fi

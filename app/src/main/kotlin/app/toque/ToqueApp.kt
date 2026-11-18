@@ -47,7 +47,7 @@ class ToqueApp : Application() {
             }
         }
         log.write("interface", "démarrage")
-        TimeSync.start(this, prefs, log)
+        Thread({ TimeSync.apply(log) }, "toque-heure").start()
     }
 
     private fun isMainProcess(): Boolean {

@@ -35,7 +35,6 @@ $Known = @{
     DriverCab  = @{ Name = "20896845_fdc6bb5aa9a9bac99adf85d931d6c21d1130a96e.cab"; Sha = "ce72e97c07582ad41debfaeee6f6284ecd28285df5f9caa05193653fb236561f" }
     FlashTool  = @{ Sha = "67e9eb48161087d43eca845b2dc0e9beacac3c0381bd1ce7989d48b17e2084a7" }
     FlashDA    = @{ Sha = "9cbf39f3925fe88d18bd4c4e45dd1c01741bf7a31a4f69252dfb318d229c0346" }
-    Releases   = "https://api.github.com/repos/Wuki60/MrCuisineVibeConnect/releases/latest"
 }
 $PartitionSize = 16777216   # boot and recovery: 16 MiB each
 $ByName = "/dev/block/platform/mtk-msdc.0/11120000.msdc0/by-name"
@@ -246,19 +245,6 @@ function Step-Prepare {
     if ((Sha $scatter) -ne $Known.Scatter.Sha) { Fail "Scatter file checksum mismatch: this guide is only for the SKMC 1200." }
     Ok "TWRP and scatter file"
 
-    # Toque APK (latest release)
-    if ($Apk -eq "") {
-        try {
-            $rel = Invoke-RestMethod -Uri $Known.Releases -Headers @{ "User-Agent" = "toque-setup" }
-            $asset = $rel.assets | Where-Object { $_.name -like "Toque-*.apk" } | Select-Object -First 1
-            if ($asset) {
-                $dest = Join-Path $Downloads $asset.name
-                if (-not (Test-Path $dest)) { Fetch $asset.browser_download_url $dest }
-                Ok ("Toque " + $rel.tag_name + ": " + $dest)
-            } else { Say "No Toque APK in the latest release: build it (see README) or pass -Apk later." }
-        } catch { Say ("GitHub releases unreachable: " + $_.Exception.Message) }
-    }
-
     # Things that need a browser: the MediaTek driver and SP Flash Tool.
     $cab = Join-Path $Downloads $Known.DriverCab.Name
     $missing = $false
@@ -418,12 +404,10 @@ function Step-Android {
 }
 
 function Step-Install {
-    $apkPath = $Apk
-    if ($apkPath -eq "") {
-        $latest = Get-ChildItem $Downloads -Filter "Toque-*.apk" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-        if ($latest) { $apkPath = $latest.FullName }
+    if (-not $Apk -or -not (Test-Path -LiteralPath $Apk -PathType Leaf)) {
+        Fail "Pass the path to your locally built Toque APK with -Apk <file>."
     }
-    if ($apkPath -eq "" -or -not (Test-Path $apkPath)) { Fail "No Toque APK: run 'prepare' (downloads the latest release) or pass -Apk <file>." }
+    $apkPath = (Resolve-Path -LiteralPath $Apk).Path
     $adb = Get-Adb
     $env:Path = (Split-Path $adb) + ";" + $env:Path
     Push-Location $Repo

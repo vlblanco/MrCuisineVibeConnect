@@ -19,25 +19,21 @@ android {
         versionName = "0.5.1"
     }
 
-    signingConfigs {
-        // Clé du projet, publique exprès : toutes les compilations (PC, GitHub) portent la même
-        // signature, donc chaque mise à jour s'installe par-dessus la précédente.
-        create("toque") {
-            storeFile = file("signature/toque.p12")
+    val signingFile = providers.environmentVariable("TOQUE_KEYSTORE")
+    val personalSigning = if (signingFile.isPresent) {
+        signingConfigs.create("personal") {
+            storeFile = file(signingFile.get())
             storeType = "PKCS12"
-            storePassword = "toque-public"
-            keyAlias = "toque"
-            keyPassword = "toque-public"
+            storePassword = providers.environmentVariable("TOQUE_STORE_PASSWORD").get()
+            keyAlias = providers.environmentVariable("TOQUE_KEY_ALIAS").get()
+            keyPassword = providers.environmentVariable("TOQUE_KEY_PASSWORD").get()
         }
-    }
+    } else null
 
     buildTypes {
-        debug {
-            signingConfig = signingConfigs.getByName("toque")
-        }
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("toque")
+            signingConfig = personalSigning
         }
     }
 
