@@ -34,7 +34,7 @@ class Prefs(context: Context) {
 
     /** Langue de l'interface : « auto » (celle du système), « fr » ou « en ». */
     var language: String
-        get() = p.getString("language", I18n.AUTO) ?: I18n.AUTO
+        get() = p.getString("language", I18n.DEFAULT) ?: I18n.DEFAULT
         set(v) {
             p.edit().putString("language", v).commit()
         }

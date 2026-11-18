@@ -95,8 +95,13 @@ class OnlineSync(private val context: Context, private val prefs: Prefs, private
             progress(tr("Recettes : %d / %d", i + 1, todo.size))
             try {
                 val r = McOnline.parseRecipe(get(McOnline.recipeUrl(e.apiId), language))
-                if (r != null) batch += r
-                index[e.apiId.toString()] = e.stamp
+                if (r == null || r.id != McOnline.toqueId(e.apiId)) {
+                    failures++
+                    log.write("synchro", "fiche inutilisable : ${e.apiId}")
+                } else {
+                    batch += r
+                    index[e.apiId.toString()] = e.stamp
+                }
                 inARow = 0
             } catch (ex: IOException) {
                 failures++

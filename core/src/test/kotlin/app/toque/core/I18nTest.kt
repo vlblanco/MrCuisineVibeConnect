@@ -97,20 +97,26 @@ class I18nTest {
         val keys = sourceKeys()
         assertTrue("trop peu de textes trouvés (${keys.size})", keys.size > 300)
         val files = languageFiles()
-        assertTrue("lang/en.json manquant", files.any { it.code == "en" })
+        for (code in listOf("en", I18n.DEFAULT)) {
+            assertTrue("lang/$code.json manquant", files.any { it.code == code })
+        }
         for (l in files) {
             val unknown = l.texts.keys.filter { it !in keys }
             assertEquals("${l.code}.json : textes inconnus dans le code :\n" + unknown.joinToString("\n"), 0, unknown.size)
             val bad = l.texts.filter { (fr, t) -> params(fr) != params(t) }
             assertEquals("${l.code}.json : paramètres différents :\n" + bad.entries.joinToString("\n"), 0, bad.size)
             val missing = keys.keys.filter { it !in l.texts }
-            if (l.code == "en") assertEquals("en.json : textes sans traduction :\n" + missing.joinToString("\n"), 0, missing.size)
+            if (l.code in listOf("en", I18n.DEFAULT)) assertEquals("${l.code}.json : textes sans traduction :\n" + missing.joinToString("\n"), 0, missing.size)
             else if (missing.isNotEmpty()) println("${l.code}.json : ${missing.size} texte(s) restent en français")
         }
     }
 
     @Test fun switchingLanguage() {
         I18n.install(languageFiles())
+        assertEquals("es", I18n.resolve(I18n.DEFAULT, "fr").code)
+        assertEquals("es", I18n.resolve(I18n.AUTO, "es-ES").code)
+        I18n.select("es")
+        assertEquals("Ajustes", tr("Réglages"))
         val en = I18n.find("en")!!
         assertEquals("English", en.name)
         I18n.select("en")

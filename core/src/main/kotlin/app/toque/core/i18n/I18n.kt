@@ -14,6 +14,7 @@ class Language(val code: String, val name: String, val texts: Map<String, String
 object I18n {
     /** Valeur du réglage : langue du système. */
     const val AUTO = "auto"
+    const val DEFAULT = "es"
 
     val FRENCH = Language("fr", "Français", emptyMap())
 
@@ -55,7 +56,7 @@ object I18n {
 
     /** Langue effective d'après le réglage (« auto » ou un code) et la langue du système. */
     fun resolve(setting: String?, systemLanguage: String): Language =
-        if (setting.isNullOrBlank() || setting == AUTO) find(systemLanguage) ?: find("en") ?: FRENCH
+        if (setting.isNullOrBlank() || setting == AUTO) find(systemLanguage) ?: find(DEFAULT) ?: find("en") ?: FRENCH
         else find(setting) ?: FRENCH
 
     fun select(code: String?) {

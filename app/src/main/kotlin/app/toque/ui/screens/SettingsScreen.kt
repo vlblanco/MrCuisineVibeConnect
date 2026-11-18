@@ -96,7 +96,7 @@ class SettingsScreen(a: MainActivity) : Screen(a) {
         safety.addView(toggle(tr("Sons"), a.prefs.sound) { a.prefs.sound = it }, Ui.lp(t = 10))
 
         // ---- Langue (titre bilingue : trouvable quelle que soit la langue affichée)
-        val language = section(right, "Langue · Language", Icon.Kind.INFO)
+        val language = section(right, tr("Langue"), Icon.Kind.INFO)
         val options = listOf(I18n.AUTO to tr("Automatique (langue du système)")) + I18n.languages.map { it.code to it.name }
         language.addView(dropdown(options, a.prefs.language) { code ->
             a.prefs.language = code

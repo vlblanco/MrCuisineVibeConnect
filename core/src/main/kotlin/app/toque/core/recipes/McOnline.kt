@@ -36,7 +36,7 @@ object McOnline {
 
     fun toqueId(apiId: Long): String = ID_PREFIX + apiId
 
-    /** Langue des recettes d'après celle de l'interface (le français par défaut). */
+    /** Langue des recettes d'après celle de l'interface (espagnol par défaut). */
     fun languageFor(uiCode: String): String = when (uiCode.substringBefore('-').lowercase()) {
         "fr" -> "fr-FR"
         "de" -> "de-DE"
@@ -47,7 +47,7 @@ object McOnline {
         "cs" -> "cs-CZ"
         "pt" -> "pt-PT"
         "en" -> "en-US"
-        else -> "fr-FR"
+        else -> "es-ES"
     }
 
     class Entry(

@@ -116,6 +116,8 @@ class McOnlineTest {
         assertEquals("web", McOnline.headers("fr-FR")["device-type"])
         assertEquals("fr-FR", McOnline.languageFor("fr"))
         assertEquals("en-US", McOnline.languageFor("en"))
+        assertEquals("es-ES", McOnline.languageFor("es"))
+        assertEquals("es-ES", McOnline.headers(McOnline.languageFor("es"))["Accept-Language"])
         assertTrue(McOnline.listUrl(2).contains("/page/2/size/100?"))
         assertTrue(McOnline.listUrl(1).contains("MC2.0"))
     }

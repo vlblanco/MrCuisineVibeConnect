@@ -11,7 +11,7 @@ uses **the official Lidl recipes**.
 > Android 6) since October 2026, but has only been tried on that one. Use at your own risk and
 > follow the first-run procedure.
 >
-> The interface is available in **English** and **French** (*Settings › Langue · Language*), and
+> The interface is available in **English** and **French** (*Settings › Language*), and
 > other languages can be added with a single file (see below).
 
 ## Install with an AI agent
@@ -34,6 +34,14 @@ cannot do itself:
 - tap **Grant** once on the robot's screen.
 
 Allow 1 to 2 hours. Without an agent: [docs/INSTALLATION.md](docs/INSTALLATION.md).
+
+## Español
+
+El español es el idioma predeterminado. Si ya elegiste otro idioma, cambia a **Español**
+en **Ajustes › Idioma** y pulsa **Ajustes › Recetas de Lidl › Sincronizar**. Toque solicita
+el catálogo oficial para Monsieur Cuisine Connect en `es-ES` y vuelve a descargar las
+fichas al cambiar de idioma. Los favoritos se conservan por identificador.
+Las recetas importadas desde la aplicación original conservan su idioma de origen.
 
 ## Features
 
